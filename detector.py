@@ -30,7 +30,7 @@ class LandmarkDetector:
     def __init__(self):
         self.detector = FaceDetector()
         self.landmark_detector = dlib.shape_predictor(
-            "shape_predictor_68_face_landmarks.dat")
+            "models/shape_predictor_68_face_landmarks.dat")
 
         self.landmarks = None
 

@@ -22,7 +22,7 @@ class HeadPoseEstimator:
         self.t_vec = np.array(
             [[-14.97821226], [-10.62040383], [-2053.03596872]])
 
-    def _get_full_model_points(self, filename='model.txt'):
+    def _get_full_model_points(self, filename='models/model.txt'):
         """CHANGE IT!!!!!!!!!!!!!"""
 
         raw_value = []
