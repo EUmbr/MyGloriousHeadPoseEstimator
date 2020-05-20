@@ -12,7 +12,7 @@ class FaceDetector:
 
     def get_detected_face(self, image):
         faces, scores, idx = self.detector.run(image)
-        self.detected_results = faces
+        self.detected_result = faces
         return faces
 
     def draw_faces(self, image, face, color=(170, 205, 102)):
@@ -46,8 +46,9 @@ class LandmarkDetector:
 
         return landmarks
 
-    def draw_landmarks(image, landmarks, color=((71, 99, 255))):
+    def draw_landmarks(self, image, landmarks, color=(71, 99, 255)):
         for landmark in landmarks:
             x = landmarks.part(landmark).x
             y = landmarks.part(landmark).y
-            cv2.circle(image, (x, y), 4, (71, 99, 255), -1)
+
+            cv2.circle(image, (x, y), 4, color, -1)
