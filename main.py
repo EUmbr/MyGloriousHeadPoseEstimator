@@ -6,13 +6,10 @@ from headpose_estimator import HeadPoseEstimator
 cap = cv2.VideoCapture(0)
 _, start_frame = cap.read()
 
-landmark_detector = LandmarkDetector()
-
 height, width = start_frame.shape[:2]
 pose_estimator = HeadPoseEstimator(image_size=(height, width))
 fd = FaceDetector()
 ld = LandmarkDetector()
-
 
 while True:
     _, frame = cap.read()

@@ -19,9 +19,13 @@ class HeadPoseEstimator:
 
         self.dist_coeefs = np.zeros((4, 1))
 
-        self.r_vec = np.array([[0.01891013], [0.08560084], [-3.14392813]])
+        self.r_vec = np.array([[0.00000013], [0.08560084], [-3.14392813]])
         self.t_vec = np.array(
             [[-14.97821226], [-10.62040383], [-2053.03596872]])
+
+        self.pitch = None
+        self.roll = None
+        self.yaw = None
 
     def _get_full_model_points(self, filename='models/model.txt'):
         """CHANGE IT!!!!!!!!!!!!!"""
@@ -46,7 +50,10 @@ class HeadPoseEstimator:
 
         if self.r_vec is None:
             (_, rotation_vector, translation_vector) = cv2.solvePnP(
-                self.points_3d, image_points, self.camera_matrix, self.dist_coeefs)
+                self.points_3d,
+                image_points,
+                self.camera_matrix,
+                self.dist_coeefs)
             self.r_vec = rotation_vector
             self.t_vec = translation_vector
 
@@ -59,7 +66,7 @@ class HeadPoseEstimator:
             tvec=self.t_vec,
             useExtrinsicGuess=True)
 
-        return (rotation_vector, translation_vector)
+        return rotation_vector, translation_vector
 
     def get_vectors(self, rotation_vector, translation_vector):
         axis = np.float32([[500, 0, 0],
@@ -85,11 +92,15 @@ class HeadPoseEstimator:
         self.roll = roll
         self.yaw = yaw
 
-        return (str(int(roll)), str(int(pitch)), str(int(yaw)))
+        return str(int(roll)), str(int(pitch)), str(int(yaw))
 
-    def draw_face_direction(self, image, nose, rotation_vector, translation_vector, color=(255, 0, 0), line_width=2):
-        (nose_end_point2D, jacobian) = cv2.projectPoints(np.array([(0.0, 0.0, 200.0)]), rotation_vector,
-                                                         translation_vector, self.camera_matrix, self.dist_coeefs)
+    def draw_face_direction(self, image, nose, rotation_vector,
+                            translation_vector, color=(255, 0, 0),
+                            line_width=2):
+        (nose_end_point2D, jacobian) = \
+            cv2.projectPoints(np.array([(0.0, 0.0, 200.0)]),
+                              rotation_vector, translation_vector,
+                              self.camera_matrix, self.dist_coeefs)
 
         p1 = (int(nose[0]), int(nose[1]))
         p2 = (int(nose_end_point2D[0][0][0]), int(nose_end_point2D[0][0][1]))
