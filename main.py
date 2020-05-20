@@ -26,13 +26,17 @@ while True:
         fd.draw_faces(frame, face)
         landmarks = ld.detect(gray, face)
         nose = landmarks[30]
-        print(landmarks)
 
         head_pose = pose_estimator.solve_pose_by_68_points(landmarks)
 
         pose_estimator.draw_face_direction(
             frame, nose, head_pose[0], head_pose[1])
         pose_estimator.draw_all_landmarks(frame, landmarks)
+        pose_estimator.draw_mask(frame, landmarks)
+
+        roll, pitch, yaw = pose_estimator.get_vectors(
+            head_pose[0], head_pose[1])
+        pose_estimator.draw_vectors(frame)
 
     cv2.imshow("Frame", frame)
 
