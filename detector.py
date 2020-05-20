@@ -15,13 +15,13 @@ class FaceDetector:
         self.detected_result = faces
         return faces
 
-    def draw_faces(self, image, face):
+    def draw_faces(self, image, face, color=(170, 205, 102)):
         x1 = face.left()
         y1 = face.top()
         x2 = face.right()
         y2 = face.bottom()
 
-        cv2.rectangle(image, (x1, y1), (x2, y2), (170, 205, 102), 3)
+        cv2.rectangle(image, (x1, y1), (x2, y2), color, 3)
 
 
 class LandmarkDetector:
@@ -46,9 +46,9 @@ class LandmarkDetector:
 
         return landmarks
 
-    def draw_landmarks(self, image, landmarks):
+    def draw_landmarks(self, image, landmarks, color=(71, 99, 255)):
         for landmark in landmarks:
             x = landmarks.part(landmark).x
             y = landmarks.part(landmark).y
 
-            cv2.circle(image, (x, y), 4, (71, 99, 255), -1)
+            cv2.circle(image, (x, y), 4, color, -1)
