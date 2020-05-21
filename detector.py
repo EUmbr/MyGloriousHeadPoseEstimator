@@ -13,7 +13,7 @@ class FaceDetector:
         self.detector = dlib.get_frontal_face_detector()
         self.detected_result = None
 
-    def detecte_face(self, image):
+    def detect_face(self, image):
         faces, scores, idx = self.detector.run(image)
         self.detected_result = faces
         return faces
@@ -34,7 +34,7 @@ class FaceDetector:
             success = True
             face = detections[0, 0, 0, 3:7] * np.array([w, h, w, h])
             diff = (face[3]-face[1]) - (face[2] - face[0])
-            face[0] -=diff/2
+            face[0] -= diff/2
             face[2] += diff/2
             face = face.astype('int')
             
