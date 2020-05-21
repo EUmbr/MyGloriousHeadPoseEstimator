@@ -80,9 +80,9 @@ class HeadPoseEstimator:
 
         pitch, yaw, roll = [math.radians(_) for _ in eulerAngles]
 
-        pitch = math.degrees(math.asin(math.sin(pitch)))
-        roll = -math.degrees(math.asin(math.sin(roll)))
-        yaw = math.degrees(math.asin(math.sin(yaw)))
+        pitch = math.degrees(pitch)
+        roll = -math.degrees(roll)
+        yaw = math.degrees(yaw)
 
         self.pitch = pitch
         self.roll = roll
