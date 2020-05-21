@@ -17,7 +17,7 @@ while True:
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    success, dnn_face = fd.detect_with_dnn(frame, 0.2)
+    success, dnn_face = fd.detect_with_dnn(frame, 0.5)
 
     if success:
         fd.draw_face(frame, dnn_face, (0, 0, 255))
