@@ -31,9 +31,13 @@ class FaceDetector:
 
         conf = detections[0, 0, 0, 2]
         if conf > treshold:
-            face = detections[0, 0, 0, 3:7] * np.array([w, h, w, h])
-            face = face.astype('int')
             success = True
+            face = detections[0, 0, 0, 3:7] * np.array([w, h, w, h])
+            diff = (face[3]-face[1]) - (face[2] - face[0])
+            face[0] -=diff/2
+            face[2] += diff/2
+            face = face.astype('int')
+            
             face = dlib.rectangle(face[0], face[1], face[2], face[3])
 
             return success, face
