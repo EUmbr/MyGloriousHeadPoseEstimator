@@ -17,11 +17,11 @@ while True:
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    faces = fd.get_detected_face(gray)
-    if faces:
-        face = faces[0]
-        fd.draw_faces(frame, face)
-        landmarks = ld.detect(gray, face)
+    success, dnn_face = fd.detect_with_dnn(frame, 0.2)
+
+    if success:
+        fd.draw_face(frame, dnn_face, (0, 0, 255))
+        landmarks = ld.detect(gray, dnn_face)
         nose = landmarks[30]
 
         head_pose = pose_estimator.solve_pose_by_68_points(landmarks)
