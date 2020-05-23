@@ -21,6 +21,7 @@ while True:
 
     if success:
         fd.draw_face(frame, dnn_face, (0, 0, 255))
+
         landmarks = ld.detect(gray, dnn_face)
         nose = landmarks[30]
 
