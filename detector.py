@@ -7,15 +7,45 @@ class FaceDetector:
     """Detect face on image"""
 
     def __init__(self):
+        self.net = cv2.dnn.readNetFromCaffe(
+            'models/deploy.prototxt',
+            'models/res10_300x300_ssd_iter_140000.caffemodel')
         self.detector = dlib.get_frontal_face_detector()
         self.detected_result = None
 
-    def get_detected_face(self, image):
+    def detect_face(self, image):
         faces, scores, idx = self.detector.run(image)
         self.detected_result = faces
         return faces
 
-    def draw_faces(self, image, face, color=(170, 205, 102)):
+    def detect_with_dnn(self, image, treshold=0.5):
+        (h, w) = image.shape[:2]
+
+        # preprocessing input image
+        blob = cv2.dnn.blobFromImage(
+            image, 1.0, (300, 300), (104.0, 177.0, 123.0))
+        self.net.setInput(blob)
+
+        # apply face detection
+        detections = self.net.forward()
+
+        conf = detections[0, 0, 0, 2]
+        if conf > treshold:
+            success = True
+            face = detections[0, 0, 0, 3:7] * np.array([w, h, w, h])
+            diff = (face[3]-face[1]) - (face[2] - face[0])
+            face[0] -= diff/2
+            face[2] += diff/2
+            face = face.astype('int')
+            
+            face = dlib.rectangle(face[0], face[1], face[2], face[3])
+
+            return success, face
+
+        else:
+            return False, None
+
+    def draw_face(self, image, face, color=(170, 205, 102)):
         x1 = face.left()
         y1 = face.top()
         x2 = face.right()
@@ -28,7 +58,6 @@ class LandmarkDetector:
     """Facial landmark detector"""
 
     def __init__(self):
-        self.detector = FaceDetector()
         self.landmark_detector = dlib.shape_predictor(
             "models/shape_predictor_68_face_landmarks.dat")
 
