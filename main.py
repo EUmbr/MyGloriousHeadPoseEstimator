@@ -20,9 +20,10 @@ while True:
     success, dnn_face = fd.detect_with_dnn(frame, 0.75)
 
     if success:
-        fd.draw_face(frame, dnn_face, (0, 0, 255))
+        fd.draw_face(frame, dnn_face[0], (0, 0, 255))
         landmarks = ld.detect(gray, dnn_face)
         nose = landmarks[30]
+        # ld.draw_landmarks(frame, landmarks)
 
         head_pose = pose_estimator.solve_pose_by_68_points(landmarks)
 
@@ -40,3 +41,4 @@ while True:
     key = cv2.waitKey(1)
     if key == 27:
         break
+

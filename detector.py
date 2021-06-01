@@ -1,4 +1,3 @@
-import dlib
 import cv2
 import numpy as np
 
@@ -8,15 +7,9 @@ class FaceDetector:
 
     def __init__(self):
         self.net = cv2.dnn.readNetFromCaffe(
-            'models/deploy.prototxt',
-            'models/res10_300x300_ssd_iter_140000.caffemodel')
-        self.detector = dlib.get_frontal_face_detector()
+            "models/deploy.prototxt",
+            "models/res10_300x300_ssd_iter_140000_fp16.caffemodel")
         self.detected_result = None
-
-    def detect_face(self, image):
-        faces, scores, idx = self.detector.run(image)
-        self.detected_result = faces
-        return faces
 
     def detect_with_dnn(self, image, treshold=0.5):
         (h, w) = image.shape[:2]
@@ -36,20 +29,20 @@ class FaceDetector:
             diff = (face[3]-face[1]) - (face[2] - face[0])
             face[0] -= diff/2
             face[2] += diff/2
+            face[3] -= face[1]
+            face[2] -= face[0]
             face = face.astype('int')
-            
-            face = dlib.rectangle(face[0], face[1], face[2], face[3])
 
-            return success, face
+            return success, np.array([face])
 
         else:
             return False, None
 
     def draw_face(self, image, face, color=(170, 205, 102)):
-        x1 = face.left()
-        y1 = face.top()
-        x2 = face.right()
-        y2 = face.bottom()
+        x1 = face[0]
+        y1 = face[1]
+        x2 = face[0] + face[2]
+        y2 = face[1] + face[3]
 
         cv2.rectangle(image, (x1, y1), (x2, y2), color, 3)
 
@@ -58,26 +51,21 @@ class LandmarkDetector:
     """Facial landmark detector"""
 
     def __init__(self):
-        self.landmark_detector = dlib.shape_predictor(
-            "models/shape_predictor_68_face_landmarks.dat")
+        self.landmark_detector = cv2.face.createFacemarkLBF()
+        self.landmark_detector.loadModel("models/lbfmodel.yaml")
 
         self.landmarks = None
 
     def detect(self, image, face):
         landmarks = np.zeros((68, 2))
-        self.landmarks = self.landmark_detector(image, face)
+        _, self.landmarks = self.landmark_detector.fit(image, face)
 
         for n in range(0, 68):
-            x = self.landmarks.part(n).x
-            landmarks[n, 0] = x
-            y = self.landmarks.part(n).y
-            landmarks[n, 1] = y
+            landmarks[n, 0] = self.landmarks[0][0][n][0]
+            landmarks[n, 1] = self.landmarks[0][0][n][1]
 
         return landmarks
 
     def draw_landmarks(self, image, landmarks, color=(71, 99, 255)):
         for landmark in landmarks:
-            x = landmarks.part(landmark).x
-            y = landmarks.part(landmark).y
-
-            cv2.circle(image, (x, y), 4, color, -1)
+            cv2.circle(image, (int(landmark[0]), int(landmark[1])), 4, color, -1)

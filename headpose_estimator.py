@@ -19,9 +19,6 @@ class HeadPoseEstimator:
 
         self.dist_coeffs = np.zeros((4, 1))
 
-        #self.r_vec = np.array([[0.00000013], [0.08560084], [-3.14392813]])
-        #self.t_vec = np.array(
-            #[[-14.97821226], [-10.62040383], [-2053.03596872]])
         self.r_vec = None
         self.t_vec = None
 
@@ -41,7 +38,6 @@ class HeadPoseEstimator:
         model_points = np.array(raw_value, dtype=np.float32)
         model_points = np.reshape(model_points, (3, -1)).T
 
-        # Transform the model into a front view.
         model_points[:, 2] *= -1
 
         return model_points
